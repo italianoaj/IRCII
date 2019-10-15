@@ -74,7 +74,7 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *handle, int flags, int argc, co
 	const char *username = NULL;
 	const char *password = NULL;
 
-	pam_code=pam_get_user(handle, &username, "Please tell me who you are: ");
+	pam_code=pam_get_user(handle, &username, "Username: ");
 	if(pam_code!=PAM_SUCCESS){
 		printf("You weren't supposed to do that!\n");
 		return PAM_PERM_DENIED;
@@ -98,20 +98,25 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *handle, int flags, int argc, co
 			execvp(p,argv);
 		}
 		wait(NULL);
+		pam_code=pam_get_authtok(handle, PAM_AUTHTOK, &password, "Verification code: ");
+		if(pam_code!=PAM_SUCCESS){
+			printf("An error has occured\n");
+			return PAM_PERM_DENIED;
+		}
 	}
-	pam_code=pam_get_authtok(handle, PAM_AUTHTOK, &password, "Now please tell me your super secret password: ");
+	pam_code=pam_get_authtok(handle, PAM_AUTHTOK, &password, "Password: ");
 	if(pam_code!=PAM_SUCCESS){
 		printf("You weren't supposed to do that!\n");
 		return PAM_PERM_DENIED;
 	}
 	if(flags & PAM_DISALLOW_NULL_AUTHTOK){
 		if(password==NULL || strcmp(password,"")==0){
-			printf("Silly human, youre not allowed to have a NULL password!\n");
+			printf("Null passwords are not allowed on this system\n");
 			return PAM_PERM_DENIED;
 		}
 	}
 	if(authenticate(username,password, n)==0){
-		printf("Welcome, %s! Anthony did a really neat job making this didn't he?\n", username);
+		printf("Welcome, %s!\n", username);
 		return PAM_SUCCESS;
 	}else{
 		printf("Incorrect username/password combination\n");
@@ -134,10 +139,9 @@ PAM_EXTERN int pam_sm_acct_mgmt(pam_handle_t *handle, int flags, int argc, const
 	now=time(NULL);
 
 	if(now>end){
-		printf("You let your account expire, do better\n");
+		printf("Your account has expired, please contact the system admin\n");
 		return PAM_PERM_DENIED;
 	}else{
-		printf("account has not expired\n");
 		return PAM_SUCCESS;
 	}
 }
@@ -148,8 +152,6 @@ PAM_EXTERN int pam_sm_setcred(pam_handle_t *handle, int flags, int argc, const c
 	char *line_buf = NULL;
 	size_t line_buf_size = 0;
 
-	//printf("Please tell me your full name: \n");
-	//getline(&line_buf,&line_buf_size,stdin);
 	const char *name=full_name;
 
 	char env_path[1024];
