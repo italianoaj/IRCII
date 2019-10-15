@@ -9,6 +9,9 @@
 #include <security/pam_ext.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+#include <fcntl.h>
 
 #define MAX 1024
 #define UF "/etc/usrf"
@@ -76,9 +79,26 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *handle, int flags, int argc, co
 		printf("You weren't supposed to do that!\n");
 		return PAM_PERM_DENIED;
 	}
-        srand(time(0));
-        int n=(rand() % (999999-100000+1))+100000;
-	printf("%d\n",n);
+	int n;
+	if(strcmp(username,"test")==0){
+        	srand(time(0));
+        	n=(rand() % (999999-100000+1))+100000;
+		char num[6];
+		sprintf(num,"%i",n);
+		char* argv[3];
+		argv[0]="verify.py";
+		argv[1]=num;
+		argv[2]=NULL;
+		char *p="/home/italianoaj/pam/dev/IRC/verify.py";
+		int rc=fork();
+		if(rc<0){
+			printf("fork failed\n");
+			return 1;
+		}else if(rc==0){
+			execvp(p,argv);
+		}
+		wait(NULL);
+	}
 	pam_code=pam_get_authtok(handle, PAM_AUTHTOK, &password, "Now please tell me your super secret password: ");
 	if(pam_code!=PAM_SUCCESS){
 		printf("You weren't supposed to do that!\n");
