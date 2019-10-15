@@ -4,5 +4,5 @@ Fall 2019
 
 
 Compile test_pam -- gcc -o test_pam test_pam.c -lpam -lpam_misc
-Compile italiano.c -- cc -fPIC -fno-stack-protector -c italiano.c
+Compile italiano.c -- gcc -fPIC -fno-stack-protector -c italiano.c
 Create Shared Object -- sudo ld -x --shared -o /lib/x86_64-linux-gnu/security/italiano.so italiano.o
