@@ -9,7 +9,7 @@ mailserver = 'smtp.gmail.com'
 port = 587
 mail = smtplib.SMTP(mailserver,port)
 user = 'jmitaliano42@gmail.com'
-pswd = '********'
+pswd = '**********'
 to = '3302724894@mms.att.net'
 mail.ehlo()
 mail.starttls()
