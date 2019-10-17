@@ -14,4 +14,4 @@ italianoMod:
 	sudo ld -x --shared -o /lib/x86_64-linux-gnu/security/italiano.so italiano.o
 
 clean:
-	-rm -f tester
+	-rm -f tester italiano.o

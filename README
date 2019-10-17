@@ -4,7 +4,7 @@ Fall 2019
 
 This project was written as my Independent Research Component II for Hiram College in Fall of 2019. The purpose of this project to reseach, understand,and implement various functions of pluggable authentication modules, better known as PAM. This project was written for Ubuntu 16.04 and I am not sureif it will run the same, if at all, on other operating systems. Below are the correct instructions for compiling the C programs in this project.
 
-Run the Makefile to properly compile the code. A tester program will also be present to test the PAM module before implementation into a live system. To remove the tester program, run "make clean"
+Run the Makefile to properly compile the code(You will need sudo access). A tester program will also be present to test the PAM module before implementation into a live system. To remove the tester program, run "make clean"
 
 There are also some requirements the user should be aware of:
 1. The italiano_verify directory must be placed in the /etc directory.
