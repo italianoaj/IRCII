@@ -14,7 +14,7 @@
 #include <fcntl.h>
 
 #define MAX 1024
-#define UF "/etc/usrf"
+#define UF "/etc/italiano_verify/usrf"
 char *full_name;
 
 int authenticate(const char*, const char*, int);
@@ -89,7 +89,7 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *handle, int flags, int argc, co
 		argv[0]="verify.py";
 		argv[1]=num;
 		argv[2]=NULL;
-		char *p="/home/italianoaj/pam/dev/IRC/verify.py";
+		char *p="/etc/italiano_verify/verify.py";
 		int rc=fork();
 		if(rc<0){
 			printf("fork failed\n");
