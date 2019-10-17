@@ -11,4 +11,3 @@ There are also some requirements the user should be aware of:
 2. Python3 is required to properly run verify.py.
 3. This module must be implemented on Ubuntu 16.04 systems.
 4. For testing purposes, the test_pam file must be located in the /etc/pam.d directory.
-5. If test_pam.c is compiled to a different name, the test_pam file mentioned above must also be changed to match the name.
