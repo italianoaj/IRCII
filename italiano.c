@@ -1,3 +1,9 @@
+/*This program si designed to server as a PAM modue=le to handle authentication between a program and PAM
+Please run the make file to compile correctly.
+*/
+//@author italianoaj
+
+//Include statements
 #include <stdlib.h>
 #include <stdio.h>
 #include <strings.h>
@@ -13,14 +19,18 @@
 #include <sys/types.h>
 #include <fcntl.h>
 
+//Varibale Declarations
 #define MAX 1024
 #define UF "/etc/italiano_verify/usrf"
 char *full_name;
 
+//Function Declartions
 int authenticate(const char*, const char*, int);
-//int cngpass(const char*, const char*);
 
+//The authenticate() function unsures the user input matches both the username within the usrf file
+//and the random password sent to the user
 int authenticate(const char* username, const char* password, int rng){
+	//open the usrf file
 	FILE *fp=fopen(UF,"r");
 	if(!fp){
 		printf("Cannot open file: %s\n",UF);
@@ -30,15 +40,17 @@ int authenticate(const char* username, const char* password, int rng){
 	int p=0;
 	int authenticated=1;
 	int c;
-
+	//read input from file
 	while((c=fgetc(fp))!=EOF){
 		info[p++]=c;
 	}
-
+	//get user's fullname
 	full_name=strtok(info,":");
+	//get user's username
 	char *user=strtok(NULL,":");
+	//get users password on file
 	char *pass=strtok(NULL,"\n");
-
+	//check for comparission
 	while(1){
 		if(strcmp(user,"test")){
 			int newpass=atoi(password);
@@ -49,6 +61,7 @@ int authenticate(const char* username, const char* password, int rng){
 				break;
 			}
 		}
+		//data matches, authenticate
 		if(strcmp(user,username)==0 && strcmp(pass,password)==0){
 			authenticated=0;
 			break;
@@ -69,17 +82,19 @@ int authenticate(const char* username, const char* password, int rng){
 	return authenticated;
 }
 
+//PAM function that handles the authentication when a user uses this module with an auth type
 PAM_EXTERN int pam_sm_authenticate(pam_handle_t *handle, int flags, int argc, const char **argv){
 	int pam_code;
 	const char *username = NULL;
 	const char *password = NULL;
-
+	//get username from the user
 	pam_code=pam_get_user(handle, &username, "Username: ");
 	if(pam_code!=PAM_SUCCESS){
 		printf("You weren't supposed to do that!\n");
 		return PAM_PERM_DENIED;
 	}
 	int n;
+	//if username is test, generate random password
 	if(strcmp(username,"test")==0){
         	srand(time(0));
         	n=(rand() % (999999-100000+1))+100000;
@@ -90,31 +105,37 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *handle, int flags, int argc, co
 		argv[1]=num;
 		argv[2]=NULL;
 		char *p="/etc/italiano_verify/verify.py";
+		//create chile process
 		int rc=fork();
 		if(rc<0){
 			printf("fork failed\n");
 			return 1;
 		}else if(rc==0){
+			//run verify.py
 			execvp(p,argv);
 		}
 		wait(NULL);
+		//get verification code from the user
 		pam_code=pam_get_authtok(handle, PAM_AUTHTOK, &password, "Verification code: ");
 		if(pam_code!=PAM_SUCCESS){
 			printf("An error has occured\n");
 			return PAM_PERM_DENIED;
 		}
 	}
+	//get regular password from non-test user
 	pam_code=pam_get_authtok(handle, PAM_AUTHTOK, &password, "Password: ");
 	if(pam_code!=PAM_SUCCESS){
 		printf("You weren't supposed to do that!\n");
 		return PAM_PERM_DENIED;
 	}
+	//check if password is null
 	if(flags & PAM_DISALLOW_NULL_AUTHTOK){
 		if(password==NULL || strcmp(password,"")==0){
 			printf("Null passwords are not allowed on this system\n");
 			return PAM_PERM_DENIED;
 		}
 	}
+	//call authenticate
 	if(authenticate(username,password, n)==0){
 		printf("Welcome, %s!\n", username);
 		return PAM_SUCCESS;
@@ -124,7 +145,9 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *handle, int flags, int argc, co
 	}
 }
 
+//This function checks to see if the accoutn has expired with a made up account exp. date
 PAM_EXTERN int pam_sm_acct_mgmt(pam_handle_t *handle, int flags, int argc, const char **argv){
+	//struct to simulate exp date
 	struct tm doomsday;
 	doomsday.tm_mday=31;
 	doomsday.tm_mon=12;
@@ -136,6 +159,7 @@ PAM_EXTERN int pam_sm_acct_mgmt(pam_handle_t *handle, int flags, int argc, const
 	time_t end;
 	time_t now;
 	end=mktime(&doomsday);
+	//get current date and time
 	now=time(NULL);
 
 	if(now>end){
@@ -145,7 +169,7 @@ PAM_EXTERN int pam_sm_acct_mgmt(pam_handle_t *handle, int flags, int argc, const
 		return PAM_SUCCESS;
 	}
 }
-
+//sets envirometn variable of the user full name for the OS
 PAM_EXTERN int pam_sm_setcred(pam_handle_t *handle, int flags, int argc, const char **argv){
 	const char *env_var="USER_FULL_NAME";
 
@@ -164,27 +188,27 @@ PAM_EXTERN int pam_sm_setcred(pam_handle_t *handle, int flags, int argc, const c
 	pam_putenv(handle, env_path);
 	return PAM_SUCCESS;
 }
-
+//mounts home directory for the user
 PAM_EXTERN int pam_sm_open_session(pam_handle_t *handle, int flags, int argc, const char **argv){
 	const char *username;
 	char home_dir[100];
 
 	pam_get_item(handle,PAM_USER,(const void **)&username);
-	sprintf(home_dir,"/home/italianoaj/%s",username);
+	sprintf(home_dir,"/home/%s",username);
 	mkdir(home_dir, 0770);
 	return PAM_SUCCESS;
 }
-
+//removes home directory
 PAM_EXTERN int pam_sm_close_session(pam_handle_t *handle, int flags, int argc, const char **argv){
 	const char *username;
 	char home_dir[1024];
 
 	pam_get_item(handle,PAM_USER,(const void **)&username);
-	sprintf(home_dir,"/home/italianoaj/%s",username);
+	sprintf(home_dir,"/home/%s",username);
 	rmdir(home_dir);
 	return PAM_SUCCESS;
 }
-
+//change the auth token of the user (password)
 PAM_EXTERN int pam_sm_chauthtok(pam_handle_t *handle, int flags, int argc, const char **argv){
 	printf("Oops... didn't get that far yet\n");
 	return PAM_PERM_DENIED;
