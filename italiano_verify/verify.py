@@ -8,9 +8,9 @@ emails = []
 mailserver = 'smtp.gmail.com'
 port = 587
 mail = smtplib.SMTP(mailserver,port)
-user = 'jmitaliano42@gmail.com'
-pswd = '************'
-to = '3302724894@mms.att.net'
+user = 'italiano.verify@gmail.com'
+pswd = 'It@li@n0IRC2019'
+to = sys.argv[2]
 mail.ehlo()
 mail.starttls()
 

@@ -11,3 +11,18 @@ There are also some requirements the user should be aware of:
 2. Python3 is required to properly run verify.py.
 3. This module must be implemented on Ubuntu 16.04 systems.
 4. For testing purposes, the test_pam file must be located in the /etc/pam.d directory.
+
+Extensions for Emailing Phone Numbers(by carrier):
+
+Alltel - mms.alltelwireless.com
+AT&T - mms.att.net
+Boost Mobile - myboostmobile.com
+Cricket Wireless - mms.att.net
+MetroPCS - mymetropcs.com
+Project Fi - msg.fi.google.com
+Sprint - pm.sprint.com
+Straight Talk - mms.att.net
+T-Mobile - tmomail.net
+Verizon - vzwpix.com
+Virgin Mobile - vmobl.com
+

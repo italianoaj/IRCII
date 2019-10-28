@@ -26,6 +26,7 @@ char *full_name;
 
 //Function Declartions
 int authenticate(const char*, const char*, int);
+char* getPhone(const char*);
 
 //The authenticate() function unsures the user input matches both the username within the usrf file
 //and the random password sent to the user
@@ -40,6 +41,7 @@ int authenticate(const char* username, const char* password, int rng){
 	int p=0;
 	int authenticated=1;
 	int c;
+	int newpass=atoi(password);
 	//read input from file
 	while((c=fgetc(fp))!=EOF){
 		info[p++]=c;
@@ -49,20 +51,11 @@ int authenticate(const char* username, const char* password, int rng){
 	//get user's username
 	char *user=strtok(NULL,":");
 	//get users password on file
-	char *pass=strtok(NULL,"\n");
+	char *phone=strtok(NULL,"\n");
 	//check for comparission
 	while(1){
-		if(strcmp(user,"test")){
-			int newpass=atoi(password);
-			if(newpass==rng){
-				authenticated=0;
-				break;
-			}else{
-				break;
-			}
-		}
 		//data matches, authenticate
-		if(strcmp(user,username)==0 && strcmp(pass,password)==0){
+		if(strcmp(user,username)==0 && newpass==rng){
 			authenticated=0;
 			break;
 		}
@@ -74,8 +67,8 @@ int authenticate(const char* username, const char* password, int rng){
 		if(user==NULL){
 			break;
 		}
-		pass=strtok(NULL,"\n");
-		if(pass==NULL){
+		phone=strtok(NULL,"\n");
+		if(phone==NULL){
 			break;
 		}
 	}
@@ -93,17 +86,22 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *handle, int flags, int argc, co
 		printf("You weren't supposed to do that!\n");
 		return PAM_PERM_DENIED;
 	}
+	char *phone=getPhone(username);
+	if(phone==NULL){
+		printf("User does not have a verification contact on file. Please contact the system administrator.\n");
+		return PAM_PERM_DENIED;
+	}
 	int n;
 	//if username is test, generate random password
-	if(strcmp(username,"test")==0){
         	srand(time(0));
         	n=(rand() % (999999-100000+1))+100000;
 		char num[6];
 		sprintf(num,"%i",n);
-		char* argv[3];
-		argv[0]="verify.py";
-		argv[1]=num;
-		argv[2]=NULL;
+		char* pargv[3];
+		pargv[0]="verify.py";
+		pargv[1]=num;
+		pargv[2]=phone;
+		pargv[3]=NULL;
 		char *p="/etc/italiano_verify/verify.py";
 		//create chile process
 		int rc=fork();
@@ -112,7 +110,7 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *handle, int flags, int argc, co
 			return 1;
 		}else if(rc==0){
 			//run verify.py
-			execvp(p,argv);
+			execvp(p,pargv);
 		}
 		wait(NULL);
 		//get verification code from the user
@@ -121,13 +119,6 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *handle, int flags, int argc, co
 			printf("An error has occured\n");
 			return PAM_PERM_DENIED;
 		}
-	}
-	//get regular password from non-test user
-	pam_code=pam_get_authtok(handle, PAM_AUTHTOK, &password, "Password: ");
-	if(pam_code!=PAM_SUCCESS){
-		printf("You weren't supposed to do that!\n");
-		return PAM_PERM_DENIED;
-	}
 	//check if password is null
 	if(flags & PAM_DISALLOW_NULL_AUTHTOK){
 		if(password==NULL || strcmp(password,"")==0){
@@ -136,7 +127,7 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *handle, int flags, int argc, co
 		}
 	}
 	//call authenticate
-	if(authenticate(username,password, n)==0){
+	if(authenticate(username,password,n)==0){
 		printf("Welcome, %s!\n", username);
 		return PAM_SUCCESS;
 	}else{
@@ -212,4 +203,48 @@ PAM_EXTERN int pam_sm_close_session(pam_handle_t *handle, int flags, int argc, c
 PAM_EXTERN int pam_sm_chauthtok(pam_handle_t *handle, int flags, int argc, const char **argv){
 	printf("Oops... didn't get that far yet\n");
 	return PAM_PERM_DENIED;
+}
+
+char* getPhone(const char* uname){
+	//open the usrf file
+	FILE *fp=fopen(UF,"r");
+	if(!fp){
+		printf("Cannot open file: %s\n",UF);
+		exit(1);
+	}
+	char info[MAX];
+	int p=0;
+	int c;
+	//read input from file
+	while((c=fgetc(fp))!=EOF){
+		info[p++]=c;
+	}
+	//get user's fullname
+	full_name=strtok(info,":");
+	//get user's username
+	char *user=strtok(NULL,":");
+	//get users phone number  on file
+	char *phone=strtok(NULL,"\n");
+	//check for comparission
+	while(1){
+		if(strcmp(user,uname)==0){
+			break;
+		}
+		full_name=strtok(NULL, ":");
+		if(full_name==NULL){
+			break;
+		}
+		user=strtok(NULL, ":");
+		if(user==NULL){
+			break;
+		}
+		phone=strtok(NULL,"\n");
+		if(phone==NULL){
+			break;
+		}
+	}
+	if(phone!=NULL && user!=NULL && full_name!=NULL){
+		return phone;
+	}
+	return NULL;
 }
