@@ -96,19 +96,30 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *handle, int flags, int argc, co
 		return PAM_PERM_DENIED;
 	}
 	char *phone=getPhone(username);
+	//phone is null if the user does not exist or if the user is not enrolled in the verification process.
 	if(phone==NULL){
-		printf("User does not have a verification contact on file. Please contact the system administrator.\n");
-		int retval = pam_start("login2", username, &conv, &handle);
-		//return PAM_PERM_DENIED;
-		retval=pam_authenticate(handle,flags);
-		printf("%d\n", retval);
-		return retval;
+		printf("User does not have a verification contact on file. Please contact the system administrator for enrollment.\n");
+		//begin login process for non-enrolled user
+		pam_code=pam_start("login2", username, &conv, &handle);
+			if(pam_code!=PAM_SUCCESS){
+				printf("An error has occured.\n");
+				return pam_code;
+			}
+		//get password from the user and attempt to login
+		pam_code=pam_authenticate(handle,flags);
+			//if pam_code is not 0 (PAM_SUCCESS), authentication has failed.
+			if(pam_code!=PAM_SUCCESS){
+				printf("An error has occured in Authentication.\n");
+				return pam_code;
+			}
+		return pam_code;
 	}
 	int n;
-	//if username is test, generate random password
+	//generate random number and place it into n
         srand(time(0));
        	n=(rand() % (999999-100000+1))+100000;
 	char num[6];
+	//num holds the string equivilent of n, to pass into the verify.py program
 	sprintf(num,"%i",n);
 	char* pargv[3];
 	//generate command line arguements
@@ -130,6 +141,7 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *handle, int flags, int argc, co
 		//run verify.py
 		execvp(p,pargv);
 	}
+	//wait for verify.py to finish running by child process. 
 	wait(NULL);
 	//get verification code from the user
 	pam_code=pam_get_authtok(handle, PAM_AUTHTOK, &password, "Verification code: ");
@@ -149,7 +161,7 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *handle, int flags, int argc, co
 		printf("Welcome, %s!\n", username);
 		return PAM_SUCCESS;
 	}else{
-		printf("Incorrect username/password combination\n");
+		printf("Incorrect username-verification code combination\n");
 		return PAM_PERM_DENIED;
 	}
 }
@@ -217,12 +229,7 @@ PAM_EXTERN int pam_sm_close_session(pam_handle_t *handle, int flags, int argc, c
 	rmdir(home_dir);
 	return PAM_SUCCESS;
 }
-//change the auth token of the user (password)
-PAM_EXTERN int pam_sm_chauthtok(pam_handle_t *handle, int flags, int argc, const char **argv){
-	printf("Oops... didn't get that far yet\n");
-	return PAM_PERM_DENIED;
-}
-
+//This function retrieves the phone number associated with the account that is attempting to login.
 char* getPhone(const char* uname){
 	//open the usrf file
 	FILE *fp=fopen(UF,"r");
