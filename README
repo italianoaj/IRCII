@@ -8,12 +8,20 @@ Run the Makefile to properly compile the code(You will need sudo access). A test
 
 There are also some requirements the user should be aware of:
 1. The italiano_verify directory must be placed in the /etc directory.
-2. Python3 is required to properly run verify.py.
+2. The login2 file must be placed in the /etc/pam.d directory.
 3. This module must be implemented on Ubuntu 16.04 systems.
 4. For testing purposes, the test_pam file must be located in the /etc/pam.d directory.
+5. Edits must be made to the /etc/pam.d/login file:
+	a. add "auth required italiano.so" to the begining of the file
+	b. Comment out (with #) the other auth lines in the file. 
+
+The usrf file must follow the follwoing format:
+Full Name:username:PhoneNumberWithExtension\n
+Example:
+John Doe:john:4208886969@mms.att.net
+Jane Doe:jane:3303303300@vzwpix.com
 
 Extensions for Emailing Phone Numbers(by carrier):
-
 Alltel - mms.alltelwireless.com
 AT&T - mms.att.net
 Boost Mobile - myboostmobile.com
@@ -26,3 +34,8 @@ T-Mobile - tmomail.net
 Verizon - vzwpix.com
 Virgin Mobile - vmobl.com
 
+Required packages (full command):
+sudo apt install git
+sudo apt install gcc
+sudo apt install libpam0g-dev
+sudo apt install python3
