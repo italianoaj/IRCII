@@ -1,4 +1,7 @@
 #!/usr/bin/python3
+
+# @author italianoaj #
+
 #Imports
 import smtplib
 import sys

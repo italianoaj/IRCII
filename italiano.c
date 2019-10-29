@@ -1,7 +1,7 @@
 /*This program si designed to server as a PAM modue=le to handle authentication between a program and PAM
-Please run the make file to compile correctly.
-*/
-//@author italianoaj
+Please run the make file to compile correctly.*/
+
+// @author italianoaj //
 
 //Include statements
 #include <stdlib.h>
@@ -18,15 +18,22 @@ Please run the make file to compile correctly.
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <fcntl.h>
+#include <security/pam_appl.h>
+#include <security/pam_misc.h>
 
 //Varibale Declarations
 #define MAX 1024
+// The usrf file must be in this directory
 #define UF "/etc/italiano_verify/usrf"
 char *full_name;
 
 //Function Declartions
 int authenticate(const char*, const char*, int);
 char* getPhone(const char*);
+static struct pam_conv conv = {
+    misc_conv,
+    NULL
+};
 
 //The authenticate() function unsures the user input matches both the username within the usrf file
 //and the random password sent to the user
@@ -34,6 +41,7 @@ int authenticate(const char* username, const char* password, int rng){
 	//open the usrf file
 	FILE *fp=fopen(UF,"r");
 	if(!fp){
+		//if the file cannot be opened, close.
 		printf("Cannot open file: %s\n",UF);
 		exit(1);
 	}
@@ -41,6 +49,7 @@ int authenticate(const char* username, const char* password, int rng){
 	int p=0;
 	int authenticated=1;
 	int c;
+	//ascii to integer
 	int newpass=atoi(password);
 	//read input from file
 	while((c=fgetc(fp))!=EOF){
@@ -89,36 +98,45 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *handle, int flags, int argc, co
 	char *phone=getPhone(username);
 	if(phone==NULL){
 		printf("User does not have a verification contact on file. Please contact the system administrator.\n");
-		return PAM_PERM_DENIED;
+		int retval = pam_start("login2", username, &conv, &handle);
+		//return PAM_PERM_DENIED;
+		retval=pam_authenticate(handle,flags);
+		printf("%d\n", retval);
+		return retval;
 	}
 	int n;
 	//if username is test, generate random password
-        	srand(time(0));
-        	n=(rand() % (999999-100000+1))+100000;
-		char num[6];
-		sprintf(num,"%i",n);
-		char* pargv[3];
-		pargv[0]="verify.py";
-		pargv[1]=num;
-		pargv[2]=phone;
-		pargv[3]=NULL;
-		char *p="/etc/italiano_verify/verify.py";
-		//create chile process
-		int rc=fork();
-		if(rc<0){
-			printf("fork failed\n");
-			return 1;
-		}else if(rc==0){
-			//run verify.py
-			execvp(p,pargv);
-		}
-		wait(NULL);
-		//get verification code from the user
-		pam_code=pam_get_authtok(handle, PAM_AUTHTOK, &password, "Verification code: ");
-		if(pam_code!=PAM_SUCCESS){
-			printf("An error has occured\n");
-			return PAM_PERM_DENIED;
-		}
+        srand(time(0));
+       	n=(rand() % (999999-100000+1))+100000;
+	char num[6];
+	sprintf(num,"%i",n);
+	char* pargv[3];
+	//generate command line arguements
+	pargv[0]="verify.py";
+	//random number
+	pargv[1]=num;
+	//phone number
+	pargv[2]=phone;
+	//must be null terminated array for execvp() call
+	pargv[3]=NULL;
+	char *p="/etc/italiano_verify/verify.py";
+	//create chile process
+	int rc=fork();
+	if(rc<0){
+		//if fork failed, return
+		printf("fork failed\n");
+		return PAM_ABORT;
+	}else if(rc==0){
+		//run verify.py
+		execvp(p,pargv);
+	}
+	wait(NULL);
+	//get verification code from the user
+	pam_code=pam_get_authtok(handle, PAM_AUTHTOK, &password, "Verification code: ");
+	if(pam_code!=PAM_SUCCESS){
+		printf("An error has occured\n");
+		return PAM_PERM_DENIED;
+	}
 	//check if password is null
 	if(flags & PAM_DISALLOW_NULL_AUTHTOK){
 		if(password==NULL || strcmp(password,"")==0){
