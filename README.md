@@ -19,7 +19,7 @@ The usrf file must follow the follwoing format:
 Full Name:username:PhoneNumberWithExtension\n
 Example:
 
-John Doe:john:4208886969@mms.att.net
+John Doe:john:4208886969@mms.att.net"\n"
 Jane Doe:jane:3303303300@vzwpix.com
 
 Extensions for Emailing Phone Numbers(by carrier):
