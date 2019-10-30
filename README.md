@@ -12,13 +12,14 @@ There are also some requirements the user should be aware of:
 3. This module must be implemented on Ubuntu 16.04 systems.
 4. For testing purposes, the test_pam file must be located in the /etc/pam.d directory.
 5. Edits must be made to the /etc/pam.d/login file:
-	a. add "auth required italiano.so" to the begining of the file
-	b. Comment out (with #) the other auth lines in the file. 
+	I. add "auth required italiano.so" to the begining of the file
+	II. Comment out (with #) the other auth lines in the file
+
 
 The usrf file must follow the follwoing format:
 Full Name:username:PhoneNumberWithExtension\n
-Example:
 
+Example:
 John Doe:john:4208886969@mms.att.net
 
 Jane Doe:jane:3303303300@vzwpix.com
