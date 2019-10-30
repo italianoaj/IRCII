@@ -1,4 +1,4 @@
-/*This program si designed to server as a PAM modue=le to handle authentication between a program and PAM
+/*This program is designed to server as a PAM module to handle authentication between a program and PAM
 Please run the make file to compile correctly.*/
 
 // @author italianoaj //
