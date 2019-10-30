@@ -18,24 +18,25 @@ There are also some requirements the user should be aware of:
 The usrf file must follow the follwoing format:
 Full Name:username:PhoneNumberWithExtension\n
 Example:
+
 John Doe:john:4208886969@mms.att.net
 Jane Doe:jane:3303303300@vzwpix.com
 
 Extensions for Emailing Phone Numbers(by carrier):
-Alltel - mms.alltelwireless.com
-AT&T - mms.att.net
-Boost Mobile - myboostmobile.com
-Cricket Wireless - mms.att.net
-MetroPCS - mymetropcs.com
-Project Fi - msg.fi.google.com
-Sprint - pm.sprint.com
-Straight Talk - mms.att.net
-T-Mobile - tmomail.net
-Verizon - vzwpix.com
-Virgin Mobile - vmobl.com
+1. Alltel - mms.alltelwireless.com
+2. AT&T - mms.att.net
+3. Boost Mobile - myboostmobile.com
+4. Cricket Wireless - mms.att.net
+5. MetroPCS - mymetropcs.com
+6. Project Fi - msg.fi.google.com
+7. Sprint - pm.sprint.com
+8. Straight Talk - mms.att.net
+9. T-Mobile - tmomail.net
+10. Verizon - vzwpix.com
+11. Virgin Mobile - vmobl.com
 
 Required packages (full command):
-sudo apt install git
-sudo apt install gcc
-sudo apt install libpam0g-dev
-sudo apt install python3
+1. sudo apt install git
+2. sudo apt install gcc
+3. sudo apt install libpam0g-dev
+4. sudo apt install python3
