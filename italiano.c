@@ -131,7 +131,7 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *handle, int flags, int argc, co
 	//must be null terminated array for execvp() call
 	pargv[3]=NULL;
 	char *p="/etc/italiano_verify/verify.py";
-	//create child process
+	//create child process to run the verify script. 
 	int rc=fork();
 	if(rc<0){
 		//if fork failed, return
