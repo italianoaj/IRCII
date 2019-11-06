@@ -1,6 +1,6 @@
-Anthony Italiano
-Hiram College 
-Fall 2019
+Anthony Italiano - anthony@italianoaj.com  
+Hiram College   
+Fall 2019  
 
 This project was written as my Independent Research Component II for Hiram College in Fall of 2019. The purpose of this project to reseach, understand,and implement various functions of pluggable authentication modules, better known as PAM. This project was written for Ubuntu 16.04 and I am not sureif it will run the same, if at all, on other operating systems. Below are the correct instructions for compiling the C programs in this project.
 
