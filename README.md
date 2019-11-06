@@ -40,3 +40,4 @@ sudo apt install git
 sudo apt install gcc  
 sudo apt install libpam0g-dev  
 sudo apt install python3  
+sudo apt install make  
