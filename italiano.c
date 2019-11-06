@@ -111,6 +111,8 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *handle, int flags, int argc, co
 			if(pam_code!=PAM_SUCCESS){
 				printf("An error has occured in Authentication.\n");
 				return pam_code;
+			}else if(pam_code==PAM_SUCCESS){
+				printf("Welcome, %s!\n", username);
 			}
 		return pam_code;
 	}
@@ -124,7 +126,7 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *handle, int flags, int argc, co
 	char* pargv[3];
 	//generate command line arguements
 	pargv[0]="verify.py";
-	//random number
+	//random number generated for OTP password
 	pargv[1]=num;
 	//phone number
 	pargv[2]=phone;
