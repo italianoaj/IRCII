@@ -35,7 +35,7 @@ static struct pam_conv conv = {
     NULL
 };
 
-//The authenticate() function unsures the user input matches both the username within the usrf file
+//The authenticate() function ensures the user input matches both the username within the usrf file
 //and the random password sent to the user
 int authenticate(const char* username, const char* password, int rng){
 	//open the usrf file
@@ -68,19 +68,23 @@ int authenticate(const char* username, const char* password, int rng){
 			authenticated=0;
 			break;
 		}
+		//grab next fullname
 		full_name=strtok(NULL, ":");
 		if(full_name==NULL){
 			break;
 		}
+		//grab next username
 		user=strtok(NULL, ":");
 		if(user==NULL){
 			break;
 		}
+		//grab next phone number
 		phone=strtok(NULL,"\n");
 		if(phone==NULL){
 			break;
 		}
 	}
+	//0 if user is authenticated, 1 otherwise
 	return authenticated;
 }
 
@@ -117,9 +121,10 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *handle, int flags, int argc, co
 		return pam_code;
 	}
 	int n;
+	//use current time as seed for the rand() call, promises different random number for each call to the function.
+    srand(time(0));
 	//generate random number and place it into n
-        srand(time(0));
-       	n=(rand() % (999999-100000+1))+100000;
+    n=(rand() % (999999-100000+1))+100000;
 	char num[6];
 	//num holds the string equivilent of n, to pass into the verify.py program
 	sprintf(num,"%i",n);
