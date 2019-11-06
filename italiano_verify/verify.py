@@ -1,10 +1,14 @@
 #!/usr/bin/python3
-
+#This program is used to send messages via SMTP
 # @author italianoaj #
 
 #Imports
 import smtplib
 import sys
+
+if(len(sys.argv)!=3):
+    print("usage: verify.py <message> <email address>")
+    exit
 
 #Fields
 emails = []
@@ -28,3 +32,4 @@ mail.sendmail(user, to, msg)
 
 #Closes the connection to the mail server.
 mail.close
+exit

@@ -6,7 +6,9 @@ Louis Oliphant:louis:3302724894@mms.att.net
 #each entry takes up one line and each field is seperated by colons (:)
 #In order, the fields should be Fullname:username:phonenumber.extension
 #Example:
+#
 #John Doe:john:4402346666@mms.att.net
+#
 #PROVIDE ALL ENTRIES ABOVE THESE COMMENTS AND LEAVE A SPACE BETWEEN THE 
 #FINAL ENTRY AND THESE COMMENTS (all lines that begin with #)
 #If you would like to provide additional comments, please add them below this line.
