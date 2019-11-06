@@ -7,11 +7,10 @@ This project was written as my Independent Research Component II for Hiram Colle
 Run the Makefile to properly compile the code(You will need sudo access). A tester program will also be present to test the PAM module before implementation into a live system. To remove the tester program, run "make clean"
 
 There are also some requirements the user should be aware of:   
-1. The italiano_verify directory must be placed in the /etc directory.
-2. The login2 file must be placed in the /etc/pam.d directory.
+1. The italiano_verify directory must be placed in the /etc directory with the files inside.
+2. The contents of the 'pam.d files' directory must be moved to /etc/pam.d
 3. This module must be implemented on Ubuntu 16.04 systems.
-4. For testing purposes, the test_pam file must be located in the /etc/pam.d directory.
-5. Edits must be made to the /etc/pam.d/login file:  
+4. Edits must be made to the /etc/pam.d/login file:  
 	I. add "auth required italiano.so" to the begining of the file   
 	II. Comment out (with #) the other auth lines in the file   
 
