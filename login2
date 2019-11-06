@@ -1,1 +1,2 @@
- auth       required     pam_unix.so
+#This is the file used by Italiano Verify if the user is not enrolled in the Italiano Verify process
+auth       required     pam_unix.so
