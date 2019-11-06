@@ -112,7 +112,7 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *handle, int flags, int argc, co
 				printf("An error has occured in Authentication.\n");
 				return pam_code;
 			}else if(pam_code==PAM_SUCCESS){
-				printf("Welcome, %s!\n", full_name);
+				printf("Welcome, %s!\n", username);
 			}
 		return pam_code;
 	}
