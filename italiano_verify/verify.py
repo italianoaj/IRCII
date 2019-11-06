@@ -8,7 +8,7 @@ import sys
 
 if(len(sys.argv)!=3):
     print("usage: verify.py <message> <email address>")
-    exit
+    sys.exit()
 
 #Fields
 emails = []
@@ -32,4 +32,4 @@ mail.sendmail(user, to, msg)
 
 #Closes the connection to the mail server.
 mail.close
-exit
+sys.exit()
