@@ -16,7 +16,7 @@ There are also some requirements the user should be aware of:
 	II. Comment out (with #) the other auth lines in the file   
 
 
-The usrf file must follow the follwoing format:
+The usrf file must follow the follwoing format:   
 Full Name:username:PhoneNumberWithExtension\n
 
 Example:  
@@ -36,8 +36,8 @@ Extensions for Emailing Phone Numbers(by carrier):
 10. Verizon - vzwpix.com
 11. Virgin Mobile - vmobl.com
 
-Required packages (full command):
-1. sudo apt install git
-2. sudo apt install gcc
-3. sudo apt install libpam0g-dev
-4. sudo apt install python3
+Required packages (full command):  
+sudo apt install git  
+sudo apt install gcc  
+sudo apt install libpam0g-dev  
+sudo apt install python3  

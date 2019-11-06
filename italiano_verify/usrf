@@ -1,3 +1,9 @@
 Anthony Italiano:italianoaj:3302724894@mms.att.net
 Test User:test:3302724894@mms.att.net
 Louis Oliphant:louis:3302724894@mms.att.net
+
+#this file is used to log the users that have enrolled in the Italiano Verify program
+#each entry takes up one line and each field is seperated by colons (:)
+#In order, the fields should be Fullname:username:phonenumber.extension
+#Example:
+#John Doe:john:4402346666@mms.att.net
