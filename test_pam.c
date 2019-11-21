@@ -24,20 +24,20 @@ int main(){
         char *username;
 
         //Initialize PAM 
-        retval = pam_start(service_name, NULL, &conv, &handle);
-        if (retval != PAM_SUCCESS){
+        retval=pam_start(service_name, NULL, &conv, &handle);
+        if (retval!=PAM_SUCCESS){
                 fprintf(stderr, "Failure in pam initialization: %s\n", pam_strerror(handle, retval));
                 return 1;
         }
         //Run authentication, retrieve username and password from user
-        retval = pam_authenticate(handle, 0);
-        if (retval != PAM_SUCCESS) {
+        retval=pam_authenticate(handle, 0);
+        if (retval!=PAM_SUCCESS) {
                 fprintf(stderr, "Failure in pam authentication: %s\n", pam_strerror(handle, retval));
                 return 1;
         }
 
-        retval = pam_acct_mgmt(handle, 0); /* Do account management (check the account can access the system) */
-        if (retval != PAM_SUCCESS) {
+        retval=pam_acct_mgmt(handle, 0); /* Do account management (check the account can access the system) */
+        if (retval!=PAM_SUCCESS) {
                 fprintf(stderr, "Failure in pam account management: %s\n", pam_strerror(handle, retval));
                 return 1;
        }
@@ -55,7 +55,13 @@ int main(){
 	}
 
         //Retrieve the username entered by the user.
-        pam_get_item(handle,PAM_USER,(const void **)&username);
+        retval=pam_get_item(handle,PAM_USER,(const void **)&username);
+	if(retval!=PAM_SUCCESS){
+		fprintf(stderr, "Could not obtain username: %s\n", pam_strerror(handle, retval));
+		return 1;
+	}
+	printf("Test for user %s is successful. Goodbye\n", username);
+
 
         pam_end(handle, retval); /* ALWAYS terminate the pam transaction!! */
 }
