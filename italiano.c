@@ -3,6 +3,8 @@ Please run the make file to compile correctly.*/
 
 // @author italianoaj //
 
+//TODO change printing of errors to fprintf
+
 //Include statements
 #include <stdlib.h>
 #include <stdio.h>
@@ -118,6 +120,8 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *handle, int flags, int argc, co
 			}else if(pam_code==PAM_SUCCESS){
 				printf("Welcome, %s!\n", username);
 			}
+		//Do not need to end the PAM conversation, will be done by the login application. The same handle was used for this new PAM transaction.
+		//calling  pam_end() would end the entire transaction. 
 		return pam_code;
 	}
 	int n;
@@ -197,7 +201,7 @@ PAM_EXTERN int pam_sm_acct_mgmt(pam_handle_t *handle, int flags, int argc, const
 		return PAM_SUCCESS;
 	}
 }
-//sets envirometn variable of the user full name for the OS
+//sets ENV variable of the user full name for the OS
 PAM_EXTERN int pam_sm_setcred(pam_handle_t *handle, int flags, int argc, const char **argv){
 	const char *env_var="USER_FULL_NAME";
 
@@ -230,10 +234,17 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *handle, int flags, int argc, co
 PAM_EXTERN int pam_sm_close_session(pam_handle_t *handle, int flags, int argc, const char **argv){
 	const char *username;
 	char home_dir[1024];
-
+	int retval;
+	//retrive the username of the user
 	pam_get_item(handle,PAM_USER,(const void **)&username);
+	//sets home_dir var
 	sprintf(home_dir,"/home/%s",username);
-	rmdir(home_dir);
+	//remove home directory
+	retval==rmdir(home_dir);
+	if(retval!=PAM_SUCCESS){
+			fprintf(stderr, "Unable to remove home directory\n");
+	}
+	//return
 	return PAM_SUCCESS;
 }
 //This function retrieves the phone number associated with the account that is attempting to login.
@@ -262,21 +273,26 @@ char* getPhone(const char* uname){
 		if(strcmp(user,uname)==0){
 			break;
 		}
+		//retrive the next user's full name
 		full_name=strtok(NULL, ":");
 		if(full_name==NULL){
 			break;
 		}
+		//retrieve the next user's username
 		user=strtok(NULL, ":");
 		if(user==NULL){
 			break;
 		}
+		//retrieve the next user's phone number
 		phone=strtok(NULL,"\n");
 		if(phone==NULL){
 			break;
 		}
 	}
+	//If an entry for the desired user present, return the phone number on file.
 	if(phone!=NULL && user!=NULL && full_name!=NULL){
 		return phone;
 	}
+	//User was not in the usrf file
 	return NULL;
 }

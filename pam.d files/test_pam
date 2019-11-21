@@ -3,4 +3,3 @@
 auth		required	italiano.so
 account		required	italiano.so
 session		required	italiano.so
-password	sufficient	italiano.so

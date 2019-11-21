@@ -17,7 +17,7 @@ port = 587
 mail = smtplib.SMTP(mailserver,port)
 #Username and password for the email that will send the message
 user = 'italiano.verify@gmail.com'
-pswd = 'It@li@n0IRC2019'
+pswd = ''
 #The address the message will be sent to
 to = sys.argv[2]
 

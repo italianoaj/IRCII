@@ -20,7 +20,9 @@ int main(){
 	pam_handle_t *handle = NULL;
         //name of the file inside of the /etc/pam.d direcotry to look for PAM rules
         const char *service_name = "test_pam";
+        //return value from different function calls
         int retval;
+        //username of the user testing the Italiano Verify
         char *username;
 
         //Initialize PAM 
@@ -35,9 +37,9 @@ int main(){
                 fprintf(stderr, "Failure in pam authentication: %s\n", pam_strerror(handle, retval));
                 return 1;
         }
-
-        retval=pam_acct_mgmt(handle, 0); /* Do account management (check the account can access the system) */
-        if (retval!=PAM_SUCCESS) {
+        //Check to see if the user's account has expired.
+        retval=pam_acct_mgmt(handle, 0); 
+                if (retval!=PAM_SUCCESS) {
                 fprintf(stderr, "Failure in pam account management: %s\n", pam_strerror(handle, retval));
                 return 1;
        }
@@ -47,7 +49,7 @@ int main(){
 		fprintf(stderr, "Failure in opening session: %s\n", pam_strerror(handle, retval));
 		return 1;
 	}
-        //Set the user's full name as an ENV variable 
+        //Test that the module is able to set the user's full name to the ENV variable. 
 	retval=pam_setcred(handle, 0);
 	if(retval!=PAM_SUCCESS){
 		fprintf(stderr, "Failure in setting user variable: %s\n", pam_strerror(handle, retval));
@@ -60,9 +62,9 @@ int main(){
 		fprintf(stderr, "Could not obtain username: %s\n", pam_strerror(handle, retval));
 		return 1;
 	}
+        //Let user know that the test was successful
 	printf("Test for user %s is successful. Goodbye\n", username);
 
-
-        pam_end(handle, retval); /* ALWAYS terminate the pam transaction!! */
+        //End the PAM transaction between this application and the Italiano Verify module
+        pam_end(handle, retval);
 }
-
