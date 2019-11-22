@@ -15,7 +15,8 @@ There are also some requirements the user should be aware of:
 		auth	required	italiano.so  
 		account	required	italiano.so  
 		session	required	italiano.so   
-	II. Comment out (with #) the other auth lines in the file, including the @include common-auth line.     
+	II. Comment out (with #) the other auth lines in the file, including the @include common-auth line.  
+5. It is HIGHLY recomended to test the OTP of Italiano Verify with the tester program before implementation in a live system  
 
 
 The usrf file must follow the follwoing format:   
@@ -44,3 +45,5 @@ sudo apt install gcc
 sudo apt install libpam0g-dev  
 sudo apt install python3  
 sudo apt install make  
+
+If there are any issues in set up, please reach out to me.
