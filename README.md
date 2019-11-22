@@ -11,8 +11,11 @@ There are also some requirements the user should be aware of:
 2. The contents of the 'pam.d files' directory must be moved to /etc/pam.d
 3. This module must be implemented on Ubuntu 16.04 systems.
 4. Edits must be made to the /etc/pam.d/login file:  
-	I. add "auth required italiano.so" to the begining of the file   
-	II. Comment out (with #) the other auth lines in the file   
+	I. add the following to the begining of the file:  
+		auth	required	italiano.so  
+		account	required	italiano.so  
+		session	required	italiano.so   
+	II. Comment out (with #) the other auth lines in the file, including the @include common-auth line.     
 
 
 The usrf file must follow the follwoing format:   
