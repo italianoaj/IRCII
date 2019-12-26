@@ -30,6 +30,7 @@ char buffer[64];
 int search();
 int exclude();
 int show();
+
 //main function
 int main(int argc, char** argv){
 	if(argc>2){
@@ -39,12 +40,6 @@ int main(int argc, char** argv){
 		return 1;
 	}
 	if(argc==2){
-		if(strcmp(argv[1], "-remove")!=0){
-			fprintf(stderr, "\033[0;31m");
-			fprintf(stderr, "Error: invalid flag. Valid flags include:\n-remove\n");
-			fprintf(stderr, "\033[0m");
-			return 1;
-		}
 		if(strcmp(argv[1], "-remove")==0){
 			int retval=exclude();
 			if(retval!=0){
@@ -53,6 +48,19 @@ int main(int argc, char** argv){
 				fprintf(stderr, "\033[0m");
 				return 1;
 			}
+		}if(strcmp(argv[1], "-show")==0){
+			int retval=show();
+			if(retval!=0){
+				fprintf(stderr, "\033[0;31m");
+				fprintf(stderr, "Error: unable to show users\n");
+				fprintf(stderr, "\033[0m");
+				return 1;
+			}
+		}else{
+			fprintf(stderr, "\033[0;31m");
+			fprintf(stderr, "Error: invalid flag. Valid flags include:\n-remove\n-show\n");
+			fprintf(stderr, "\033[0m");
+			return 1;
 		}
 	}
 	//retrive full name of new user
