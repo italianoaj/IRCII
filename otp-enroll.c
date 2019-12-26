@@ -29,7 +29,7 @@ char buffer[64];
 //function declarations
 int search();
 int exclude();
-
+int show();
 //main function
 int main(int argc, char** argv){
 	if(argc>2){
@@ -175,5 +175,10 @@ int search(){
 }
 int exclude(){
 	printf("in remove\n");
+	return 1;
+}
+
+int show(){
+	printf("in show\n");
 	return 1;
 }
