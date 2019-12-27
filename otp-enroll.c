@@ -48,6 +48,7 @@ int main(int argc, char** argv){
 				fprintf(stderr, "\033[0m");
 				return 1;
 			}
+			return 0;
 		}if(strcmp(argv[1], "-show")==0){
 			int retval=show();
 			if(retval!=0){
@@ -56,6 +57,7 @@ int main(int argc, char** argv){
 				fprintf(stderr, "\033[0m");
 				return 1;
 			}
+			return 0;
 		}else{
 			fprintf(stderr, "\033[0;31m");
 			fprintf(stderr, "Error: invalid flag. Valid flags include:\n-remove\n-show\n");
@@ -187,6 +189,36 @@ int exclude(){
 }
 
 int show(){
-	printf("in show\n");
-	return 1;
+	fp=fopen(UF,"r");
+	if(!fp){
+		return 1;
+	}
+	char info[MAX];
+	int p=0;
+	int c;
+	while((c=fgetc(fp))!=EOF){
+		info[p++]=c;
+	}
+	char *full_name=strtok(info, ":");
+	char *user=strtok(NULL, ":");
+	char *phone=strtok(NULL, "\n");
+	printf("\n\nUsers enrolled: \n");
+	printf("%s\n", user);
+	while(1){
+		full_name=strtok(NULL, ":");
+		if(full_name==NULL){
+			break;
+		}
+		user=strtok(NULL, ":");
+		if(user==NULL){
+			break;
+		}
+		phone=strtok(NULL, "\n");
+		if(phone==NULL){
+			break;
+		}
+		printf("%s\n", user);
+	}
+	fclose(fp);
+	return 0;
 }
