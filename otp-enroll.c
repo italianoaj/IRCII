@@ -33,15 +33,21 @@ int show();
 
 //main function
 int main(int argc, char** argv){
-	if(argc>2){
+	if(argc>3){
 		fprintf(stderr, "\033[0;31m");
 		fprintf(stderr, "Error: correct usage otp-enroll <option>\n");
 		fprintf(stderr, "\033[0m");
 		return 1;
 	}
-	if(argc==2){
+	if(argc>1){
 		if(strcmp(argv[1], "-remove")==0){
-			int retval=exclude();
+			if(argc!=3){
+				fprintf(stderr, "\033[0;31m");
+                                fprintf(stderr, "Error: no user specified\n");
+                                fprintf(stderr, "\033[0m");
+                                return 1;
+			}
+			int retval=exclude(argv[3]);
 			if(retval!=0){
 				fprintf(stderr, "\033[0;31m");
 				fprintf(stderr, "Error: unable to remove user\n");
@@ -183,8 +189,19 @@ int search(){
 	//return
 	return 0;
 }
-int exclude(){
+int exclude(char** user){
 	printf("in remove\n");
+	printf("%s", user);
+	fp=fopen(UF,"w");
+	if(!fp){
+		return 1;
+	}
+	char info[MAX];
+	int p=0;
+	int c;
+	while((c=fgetc(fp))!=EOF){
+		info[p++]=c;
+	}
 	return 1;
 }
 
@@ -202,7 +219,7 @@ int show(){
 	char *full_name=strtok(info, ":");
 	char *user=strtok(NULL, ":");
 	char *phone=strtok(NULL, "\n");
-	printf("\n\nUsers enrolled: \n");
+	printf("\nUsers enrolled: \n");
 	printf("%s\n", user);
 	while(1){
 		full_name=strtok(NULL, ":");
@@ -217,7 +234,7 @@ int show(){
 		if(phone==NULL){
 			break;
 		}
-		printf("%s\n", user);
+		printf("%s\n\n", user);
 	}
 	fclose(fp);
 	return 0;
